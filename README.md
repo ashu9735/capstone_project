@@ -165,6 +165,10 @@ placeholders. The ones that change behaviour most:
 | `CONFIDENCE_THRESHOLD` | `0.80` | Below this, the ticket escalates |
 | `RETRIEVAL_MAX_DISTANCE` | `0.55` | Above this, a passage is discarded |
 | `RETRIEVAL_TOP_K` | `5` | Passages considered per ticket |
+| `RETRIEVAL_STRATEGY` | `dense` | `dense` uses the measured search; `hybrid` adds lexical overlap and reciprocal-rank fusion |
+| `RETRIEVAL_CANDIDATE_MULTIPLIER` | `3` | Hybrid candidate pool multiplier before fusion |
+| `RETRIEVAL_RRF_K` | `60` | Reciprocal-rank fusion constant for hybrid retrieval |
+| `ALLOWED_RESPONSE_DOMAINS` | empty | Comma-separated URL domains allowed in generated replies; empty blocks URLs |
 | `ENABLE_LLM` | `true` | `false` runs the whole pipeline with no provider |
 | `MAX_CONCURRENCY` | `4` | Tickets processed in parallel |
 | `KILL_SWITCH` | `false` | `true` escalates everything immediately |

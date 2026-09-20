@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -27,6 +28,8 @@ log = logging.getLogger(__name__)
 
 _CHROMA_SETTINGS = chromadb.config.Settings(anonymized_telemetry=False)
 logging.getLogger("chromadb.telemetry").setLevel(logging.CRITICAL)
+
+_TOKEN = re.compile(r"[a-z0-9]+")
 
 
 def _client(path: Path) -> chromadb.ClientAPI:
@@ -147,17 +150,25 @@ class Retriever:
         return self._collection
 
     def search(
-        self, query: str, top_k: int | None = None, max_distance: float | None = None
+        self,
+        query: str,
+        top_k: int | None = None,
+        max_distance: float | None = None,
+        strategy: str | None = None,
     ) -> list[RetrievedPassage]:
         top_k = top_k or self.settings.retrieval_top_k
         max_distance = self.settings.retrieval_max_distance if max_distance is None else max_distance
+        strategy = (strategy or self.settings.retrieval_strategy).lower()
         query = (query or "").strip()
         if not query:
             return []
 
+        candidate_k = top_k
+        if strategy == "hybrid":
+            candidate_k *= max(1, self.settings.retrieval_candidate_multiplier)
         result = self.collection.query(
             query_texts=[query],
-            n_results=top_k,
+            n_results=candidate_k,
             include=["documents", "metadatas", "distances"],
         )
         passages: list[RetrievedPassage] = []
@@ -179,7 +190,14 @@ class Retriever:
                     rank=rank,
                 )
             )
-        return passages
+        if strategy != "hybrid" or len(passages) <= top_k:
+            return passages[:top_k]
+
+        lexical = sorted(
+            passages,
+            key=lambda passage: (-lexical_overlap(query, passage.text), passage.distance),
+        )
+        return reciprocal_rank_fusion([passages, lexical], k=self.settings.retrieval_rrf_k)[:top_k]
 
 
 def unique_doc_ids(passages: Sequence[RetrievedPassage]) -> list[str]:
@@ -188,3 +206,29 @@ def unique_doc_ids(passages: Sequence[RetrievedPassage]) -> list[str]:
         if p.doc_id and p.doc_id not in seen:
             seen.append(p.doc_id)
     return seen
+
+
+def lexical_overlap(query: str, text: str) -> float:
+    """Return a lightweight BM25-style signal without another runtime dependency."""
+    query_terms = set(_TOKEN.findall(query.lower()))
+    text_terms = _TOKEN.findall(text.lower())
+    if not query_terms or not text_terms:
+        return 0.0
+    frequencies = {term: text_terms.count(term) for term in query_terms}
+    matched = sum(1 for count in frequencies.values() if count)
+    frequency_bonus = sum(min(count, 3) for count in frequencies.values()) / (3 * len(query_terms))
+    return 0.7 * matched / len(query_terms) + 0.3 * frequency_bonus
+
+
+def reciprocal_rank_fusion(
+    ranked_lists: Sequence[Sequence[RetrievedPassage]], k: int = 60
+) -> list[RetrievedPassage]:
+    """Fuse ranked passage lists, preserving the best available passage metadata."""
+    scores: dict[str, float] = {}
+    passages: dict[str, RetrievedPassage] = {}
+    for ranked in ranked_lists:
+        for rank, passage in enumerate(ranked, start=1):
+            scores[passage.chunk_id] = scores.get(passage.chunk_id, 0.0) + 1 / (k + rank)
+            passages.setdefault(passage.chunk_id, passage)
+    ordered = sorted(scores, key=lambda chunk_id: (-scores[chunk_id], passages[chunk_id].rank))
+    return [passages[chunk_id].model_copy(update={"rank": rank}) for rank, chunk_id in enumerate(ordered, 1)]

@@ -5,7 +5,15 @@ from __future__ import annotations
 import pytest
 
 from src.generate import extract_citations, format_passages, validate_citations
-from src.retrieve import Retriever, build_index, chunk_documents, load_documents, unique_doc_ids
+from src.retrieve import (
+    Retriever,
+    build_index,
+    chunk_documents,
+    lexical_overlap,
+    load_documents,
+    reciprocal_rank_fusion,
+    unique_doc_ids,
+)
 
 
 class TestCitations:
@@ -84,3 +92,13 @@ class TestRetrieval:
 
     def test_unique_doc_ids_preserves_rank_order(self, passages):
         assert unique_doc_ids(passages + passages) == ["DOC-AUTH-001", "DOC-AUTH-002"]
+
+    def test_lexical_overlap_rewards_shared_terms(self):
+        relevant = lexical_overlap("invalid credentials login", "Login fails with invalid credentials")
+        unrelated = lexical_overlap("invalid credentials login", "Billing invoices and refunds")
+        assert relevant > unrelated
+
+    def test_reciprocal_rank_fusion_deduplicates_and_reranks(self, passages):
+        fused = reciprocal_rank_fusion([passages, list(reversed(passages))])
+        assert [p.chunk_id for p in fused] == ["DOC-AUTH-001#000", "DOC-AUTH-002#000"]
+        assert [p.rank for p in fused] == [1, 2]

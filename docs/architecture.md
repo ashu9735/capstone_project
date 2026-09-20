@@ -85,6 +85,13 @@ top 5, relevance floor 0.55. Each chunk is prefixed with its document title so s
 chunks stay self-describing, and the chunk id is `DOC-ID#NNN` so a citation can be
 traced to the exact passage. See [retrieval_experiment.md](retrieval_experiment.md).
 
+The default strategy is the measured dense search. An optional `hybrid` strategy
+retrieves a larger dense candidate pool, scores those candidates for lexical term
+overlap, and combines the dense and lexical rankings with reciprocal-rank fusion.
+This borrows the multi-retriever and RRF pattern from the retrieval experiments
+without adding a second vector service or making an extra LLM call. The relevance
+floor is applied before fusion, so hybrid retrieval cannot bypass the abstention rule.
+
 The retriever returning nothing is a supported outcome, not a failure.
 
 ### Routing
@@ -109,8 +116,10 @@ declination routes to a human.
 
 ### Guardrails
 
-Input phase — prompt injection (blocks), inbound PII (recorded, does not block; it is
-the customer's own data, and the enforcement point is the output side).
+Input phase — jailbreak and prompt-injection language blocks, support-specific
+moderation policy blocks credential requests and configured abusive-language patterns,
+and inbound PII is recorded without blocking because it is the customer's own data.
+The enforcement point for PII is the output side.
 
 Output phase, any of which blocks the reply and forces escalation:
 
@@ -118,9 +127,11 @@ Output phase, any of which blocks the reply and forces escalation:
 |---|---|
 | `pii_leak` | Email, card, API key, token, password, national ID or IP address appears in the reply |
 | `forbidden_claim` | Reply claims a refund was issued, the issue is fixed on our side, a fix date, or compensation |
+| `output_moderation_policy` | Reply requests credentials or contains configured abusive-language patterns |
 | `citation_resolves` | A citation does not correspond to a retrieved passage |
 | `grounding_required` | The reply makes claims with no citation at all |
 | `substantive_reply` | The reply is too short to be useful |
+| `url_allowlist` | Reply contains a URL outside `ALLOWED_RESPONSE_DOMAINS` |
 
 The forbidden claims are taken directly from the `must_not_claim` field present on
 every reference response in `ground_truth_responses.json`.

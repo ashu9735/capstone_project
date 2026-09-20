@@ -185,7 +185,14 @@ class Pipeline:
             return state
 
         outcome = guardrails.check_output(
-            state["response_text"], state.get("passages", []), state.get("citations", [])
+            state["response_text"],
+            state.get("passages", []),
+            state.get("citations", []),
+            allowed_domains=[
+                domain.strip()
+                for domain in self.settings.allowed_response_domains.split(",")
+                if domain.strip()
+            ],
         )
         state.setdefault("verdicts", []).extend(outcome.verdicts)
         state["response_text"] = outcome.text

@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from typing import Sequence
+from urllib.parse import urlparse
 
 from src.schemas import GuardrailVerdict, NormalisedTicket, RetrievedPassage
 
@@ -26,6 +27,7 @@ PII_PATTERNS: dict[str, re.Pattern[str]] = {
     "password_disclosure": re.compile(r"\b(?:password|passphrase|secret)\s*(?:is|=|:)\s*\S{4,}", re.IGNORECASE),
     "national_id": re.compile(r"\b\d{3}-\d{2}-\d{4}\b"),
     "ip_address": re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b"),
+    "phone_number": re.compile(r"(?<!\d)\+?\d[\d ().-]{8,}\d(?!\d)"),
 }
 
 # Claims the system is never permitted to make. Taken from the must_not_claim field
@@ -45,6 +47,21 @@ PROMPT_INJECTION = re.compile(
     r"|print\s+(?:your|the)\s+system\s+prompt"
     r"|act\s+as\s+(?:a\s+)?(?:developer|dan|jailbreak))\b",
     re.IGNORECASE,
+)
+
+JAILBREAK_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("role_override", re.compile(r"\b(?:developer|admin|system)\s+mode\b|\bno\s+restrictions?\b", re.IGNORECASE)),
+    ("prompt_extraction", re.compile(r"\b(?:repeat|quote|show|dump)\b.{0,40}\b(?:system prompt|hidden instructions|chain of thought)\b", re.IGNORECASE)),
+    ("safety_bypass", re.compile(r"\b(?:bypass|disable|turn off|circumvent)\b.{0,40}\b(?:safety|guardrails?|filters?|rules?)\b", re.IGNORECASE)),
+)
+
+URL_PATTERN = re.compile(r"\bhttps?://[^\s<>\"]+", re.IGNORECASE)
+
+# Local policy equivalent of a custom moderation check. These are support-specific
+# claims that must be handled by a human rather than emitted automatically.
+MODERATION_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("credential_request", re.compile(r"\b(?:send|share|tell me|provide)\b.{0,50}\b(?:password|api key|secret|token)\b", re.IGNORECASE)),
+    ("abusive_language", re.compile(r"\b(?:kill|die|idiot|stupid|worthless)\b", re.IGNORECASE)),
 )
 
 REDACTION = "[REDACTED]"
@@ -82,18 +99,56 @@ def redact_pii(text: str) -> tuple[str, list[str]]:
     return redacted, names
 
 
+def detect_jailbreak(text: str) -> list[str]:
+    """Return named jailbreak patterns so blocks remain explainable and auditable."""
+    hits = []
+    if PROMPT_INJECTION.search(text or ""):
+        hits.append("prompt_injection")
+    hits.extend(name for name, pattern in JAILBREAK_PATTERNS if pattern.search(text or ""))
+    return hits
+
+
+def detect_moderation_policy(text: str) -> list[str]:
+    return [name for name, pattern in MODERATION_PATTERNS if pattern.search(text or "")]
+
+
+def blocked_urls(text: str, allowed_domains: Sequence[str] = ()) -> list[str]:
+    allowed = {_normalise_domain(domain) for domain in allowed_domains if domain.strip()}
+    blocked = []
+    for raw_url in URL_PATTERN.findall(text or ""):
+        hostname = _normalise_domain(urlparse(raw_url.rstrip(".,);" )).hostname or "")
+        if hostname not in allowed and not any(hostname.endswith(f".{domain}") for domain in allowed):
+            blocked.append(hostname or raw_url)
+    return blocked
+
+
+def _normalise_domain(domain: str) -> str:
+    domain = domain.lower().strip()
+    return domain[4:] if domain.startswith("www.") else domain
+
+
 # --- Input phase -------------------------------------------------------------------
 
 def check_input(ticket: NormalisedTicket) -> GuardrailOutcome:
     verdicts: list[GuardrailVerdict] = []
 
-    injection = bool(PROMPT_INJECTION.search(ticket.text))
+    jailbreaks = detect_jailbreak(ticket.text)
     verdicts.append(
         GuardrailVerdict(
             name="prompt_injection",
-            passed=not injection,
-            blocked=injection,
-            detail="instruction-override language in ticket body" if injection else "",
+            passed=not jailbreaks,
+            blocked=bool(jailbreaks),
+            detail=", ".join(jailbreaks),
+        )
+    )
+
+    moderation_hits = detect_moderation_policy(ticket.text)
+    verdicts.append(
+        GuardrailVerdict(
+            name="input_moderation_policy",
+            passed=not moderation_hits,
+            blocked=bool(moderation_hits),
+            detail=", ".join(moderation_hits),
         )
     )
 
@@ -117,6 +172,7 @@ def check_output(
     response_text: str,
     passages: Sequence[RetrievedPassage],
     citations: Sequence[str],
+    allowed_domains: Sequence[str] = (),
 ) -> GuardrailOutcome:
     verdicts: list[GuardrailVerdict] = []
     text = response_text
@@ -138,6 +194,26 @@ def check_output(
             passed=not hits,
             blocked=bool(hits),
             detail=", ".join(hits),
+        )
+    )
+
+    urls = blocked_urls(text, allowed_domains=allowed_domains)
+    verdicts.append(
+        GuardrailVerdict(
+            name="url_allowlist",
+            passed=not urls,
+            blocked=bool(urls),
+            detail=f"unapproved domains: {', '.join(urls)}" if urls else "",
+        )
+    )
+
+    moderation_hits = detect_moderation_policy(text)
+    verdicts.append(
+        GuardrailVerdict(
+            name="output_moderation_policy",
+            passed=not moderation_hits,
+            blocked=bool(moderation_hits),
+            detail=", ".join(moderation_hits),
         )
     )
 

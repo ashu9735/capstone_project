@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     chunk_overlap: int = 60
     retrieval_top_k: int = 5
     retrieval_max_distance: float = 0.55
+    retrieval_strategy: str = "dense"
+    retrieval_candidate_multiplier: int = 3
+    retrieval_rrf_k: int = 60
 
     # Persistence
     database_url: str = "sqlite:///./storage/decisions.db"
@@ -60,6 +63,7 @@ class Settings(BaseSettings):
     # Routing
     confidence_threshold: float = 0.80
     use_calibration: bool = True
+    allowed_response_domains: str = ""
 
     # Runtime
     log_level: str = "INFO"
