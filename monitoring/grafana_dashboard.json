@@ -1,0 +1,99 @@
+{
+  "title": "CloudServe Support Automation",
+  "uid": "cloudserve-support",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Tickets processed per hour, by channel",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (channel) (rate(tickets_processed_total[5m])) * 3600",
+          "legendFormat": "{{channel}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Answered automatically against escalated",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (outcome) (rate(tickets_processed_total[5m])) * 3600",
+          "legendFormat": "{{outcome}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "First contact resolution (rolling)",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1,
+        "thresholds": { "mode": "absolute", "steps": [
+          { "color": "red", "value": null },
+          { "color": "orange", "value": 0.42 },
+          { "color": "green", "value": 0.6 }
+        ] } } },
+      "targets": [
+        {
+          "expr": "sum(rate(tickets_processed_total{outcome=\"auto_respond\"}[30m])) / clamp_min(sum(rate(tickets_processed_total[30m])), 0.0001)"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Response latency, median and 95th percentile",
+      "gridPos": { "h": 6, "w": 18, "x": 6, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [
+        { "expr": "histogram_quantile(0.5, sum(rate(response_seconds_bucket[5m])) by (le))", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, sum(rate(response_seconds_bucket[5m])) by (le))", "legendFormat": "p95" }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Guardrail activations, by guardrail",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "targets": [
+        { "expr": "sum by (guardrail) (increase(guardrail_blocks_total[15m]))", "legendFormat": "{{guardrail}}" }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "heatmap",
+      "title": "Confidence score distribution (drift shows up here first)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "targets": [
+        { "expr": "sum by (le) (increase(classification_confidence_bucket[15m]))", "format": "heatmap" }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Model provider failures and degraded tickets",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 22 },
+      "targets": [
+        { "expr": "sum by (provider) (increase(llm_provider_failures_total[15m]))", "legendFormat": "provider {{provider}}" },
+        { "expr": "sum by (reason) (increase(tickets_degraded_total[15m]))", "legendFormat": "degraded: {{reason}}" }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "Kill switch",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 22 },
+      "fieldConfig": { "defaults": { "mappings": [ { "type": "value", "options": {
+        "0": { "text": "released", "color": "green" },
+        "1": { "text": "ENGAGED", "color": "red" } } } ] } },
+      "targets": [ { "expr": "kill_switch_engaged" } ]
+    }
+  ]
+}

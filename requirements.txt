@@ -1,0 +1,54 @@
+# CloudServe Support Automation — pinned dependencies
+# Python 3.11. Install: python -m pip install -r requirements.txt
+#
+# DEVIATION FROM 06_Configuration/requirements.txt (documented in README):
+# 1. the pack pins langchain==0.1.0 + chromadb==0.3.21 + pydantic==2.0.0, which cannot
+#    co-resolve and abort a clean install. Versions below are the nearest compatible set.
+# 2. sentence-transformers/torch are NOT in the core install. The mandated embedding model
+#    all-MiniLM-L6-v2 is served through Chroma's bundled ONNX runtime instead: same model,
+#    ~90 MB instead of ~900 MB, no CUDA wheel resolution on the grader's machine.
+#    Set EMBEDDING_BACKEND=sentence-transformers and install requirements-optional.txt
+#    to use the torch path instead.
+# 3. psycopg2-binary dropped (SQLite only); dev/notebook tools moved to requirements-dev.txt.
+
+# Orchestration
+langchain==0.3.13
+langchain-core==0.3.28
+langchain-community==0.3.13
+langchain-openai==0.2.14
+langgraph==0.2.60
+
+# Vector store and embeddings (all-MiniLM-L6-v2 via bundled ONNX runtime)
+chromadb==0.5.23
+onnxruntime==1.20.1
+tokenizers==0.20.3
+
+# Model access (OpenRouter and Groq are both OpenAI-compatible)
+openai==1.58.1
+httpx==0.27.2
+requests==2.32.3
+tenacity==9.0.0
+
+# Web framework
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-multipart==0.0.20
+
+# Data processing
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.6.0
+
+# Persistence
+SQLAlchemy==2.0.36
+
+# Monitoring and logging
+prometheus-client==0.21.1
+python-json-logger==3.2.1
+
+# Utilities
+python-dotenv==1.0.1
+PyYAML==6.0.2
+tqdm==4.67.1

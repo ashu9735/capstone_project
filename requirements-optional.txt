@@ -1,0 +1,7 @@
+# Optional: the torch-based embedding path described in the Setup Guide.
+# Only needed when EMBEDDING_BACKEND=sentence-transformers.
+# The default ONNX path in requirements.txt uses the same all-MiniLM-L6-v2 model.
+-r requirements.txt
+
+sentence-transformers==3.3.1
+langchain-huggingface==0.1.2

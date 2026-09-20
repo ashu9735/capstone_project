@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "support-system"
+    static_configs:
+      - targets: ["localhost:8001"]
+
+  # The FastAPI service exposes the same registry on its own port.
+  - job_name: "support-api"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["localhost:8000"]

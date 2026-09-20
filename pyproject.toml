@@ -1,0 +1,22 @@
+[project]
+name = "cloudserve-support-automation"
+version = "1.0.0"
+description = "Triage, retrieval, routing and grounded response drafting for CloudServe support tickets"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::DeprecationWarning:pythonjsonlogger.*",
+    "ignore::DeprecationWarning:starlette.*",
+    "ignore:.*single label was found.*:UserWarning",
+]
+
+[tool.black]
+line-length = 110
+target-version = ["py311"]
+
+[tool.coverage.run]
+source = ["src", "evaluation"]
+omit = ["*/__init__.py"]

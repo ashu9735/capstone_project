@@ -1,0 +1,56 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Check for committed credentials
+        run: |
+          if [ -f .env ]; then echo "::error::.env must never be committed"; exit 1; fi
+          if grep -rInE '(sk-(live|proj|or)-[A-Za-z0-9]{16,}|gsk_[A-Za-z0-9]{20,})' \
+             --exclude-dir=.git --exclude-dir=.venv --exclude=*.md . ; then
+            echo "::error::possible API key in the repository"; exit 1
+          fi
+
+      - name: Lint
+        run: python -m flake8 src evaluation scripts tests
+
+      - name: Tests
+        # No key is configured, so the suite must pass entirely on stubs and the
+        # deterministic degraded path. That is the point of this job.
+        run: python -m pytest tests/ -v
+
+      - name: Smoke run of the harness on an unseen file
+        run: |
+          cp .env.example .env
+          python -m scripts.build_index
+          python -m evaluation.harness --input tests/fixtures/tickets.json --output ci_results
+          test -f ci_results/metrics.json
+          test -f ci_results/metrics.md
+          python - <<'PY'
+          import json, pathlib
+          report = json.loads(pathlib.Path("ci_results/metrics.json").read_text())
+          assert report["tier_three_governance_conditions"]["decision_logging"]["condition_holds"], "decisions did not reconcile"
+          assert report["tier_three_governance_conditions"]["private_data_in_outbound_text"]["condition_holds"], "private data in output"
+          print("harness smoke run OK:", report["run"]["tickets"], "tickets")
+          PY
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-results
+          path: ci_results/
+          retention-days: 7

@@ -1,4 +1,19 @@
-# Byte-compiled / optimized / DLL files
+# Secrets — never commit
+.env
+
+# Runtime artefacts
+storage/
+*.db
+*.sqlite3
+
+# Evaluation runs: keep the reports as evidence, not the bulk output
+evaluation/results/**/results.jsonl
+evaluation/results/**/responses.json
+evaluation/results/**/decisions.db
+
+# Python
+.venv/
+venv/
 __pycache__/
 *.py[codz]
 *$py.class

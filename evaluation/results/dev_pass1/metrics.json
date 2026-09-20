@@ -1,0 +1,1049 @@
+{
+  "run": {
+    "generated_at": "2026-09-11T09:31:09+00:00",
+    "input_file": "data\\development_tickets.json",
+    "tickets": 500,
+    "system_version": "1.0.0",
+    "model": "none (no provider configured)",
+    "confidence_threshold": 0.8,
+    "hidden_evaluation_set_runs": 0,
+    "wall_clock_seconds": 9.11,
+    "workers": 4,
+    "interrupted": false,
+    "llm_provider_failures": 0,
+    "llm_fallback_calls": 0
+  },
+  "tier_one_business_outcomes": {
+    "first_contact_resolution_pct": 0.0,
+    "escalation_rate_pct": 100.0,
+    "time_to_first_reply": {
+      "mean_minutes": 0.0008,
+      "median_minutes": 0.0007,
+      "p95_minutes": 0.0009
+    },
+    "satisfaction_proxy": {
+      "mean_score_out_of_5": 3.692,
+      "sample_size": 500,
+      "method": "automated rubric over the full run; see docstring for the rubric",
+      "caveat": "proxy only, not collected from customers"
+    },
+    "repeat_contacts": {
+      "auto_responded": 0,
+      "uncited_auto_responses": 0,
+      "projected_repeat_rate_pct": 0.0,
+      "historical_repeat_rate_pct": 21.6
+    }
+  },
+  "tier_two_technical_performance": {
+    "intent_classification": {
+      "evaluated": 500,
+      "accuracy_pct": 59.8,
+      "macro_precision_pct": 74.18,
+      "macro_recall_pct": 58.81,
+      "weighted_precision_pct": 75.03,
+      "weighted_recall_pct": 59.8,
+      "per_class": {
+        "account_access": {
+          "precision": 0.7917,
+          "recall": 0.8636,
+          "f1-score": 0.8261,
+          "support": 22.0
+        },
+        "api_key_issue": {
+          "precision": 0.3333,
+          "recall": 0.0556,
+          "f1-score": 0.0952,
+          "support": 18.0
+        },
+        "api_usage_question": {
+          "precision": 0.1818,
+          "recall": 0.1667,
+          "f1-score": 0.1739,
+          "support": 24.0
+        },
+        "authentication_failure": {
+          "precision": 1.0,
+          "recall": 0.65,
+          "f1-score": 0.7879,
+          "support": 20.0
+        },
+        "billing_query": {
+          "precision": 0.8571,
+          "recall": 1.0,
+          "f1-score": 0.9231,
+          "support": 24.0
+        },
+        "compliance_request": {
+          "precision": 0.525,
+          "recall": 0.8077,
+          "f1-score": 0.6364,
+          "support": 26.0
+        },
+        "configuration_help": {
+          "precision": 0.1724,
+          "recall": 0.2941,
+          "f1-score": 0.2174,
+          "support": 17.0
+        },
+        "data_export": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 29.0
+        },
+        "data_residency": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 29.0
+        },
+        "database_issue": {
+          "precision": 1.0,
+          "recall": 0.9615,
+          "f1-score": 0.9804,
+          "support": 26.0
+        },
+        "deployment_failure": {
+          "precision": 0.6585,
+          "recall": 1.0,
+          "f1-score": 0.7941,
+          "support": 27.0
+        },
+        "feature_request": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1-score": 0.6667,
+          "support": 20.0
+        },
+        "integration_help": {
+          "precision": 1.0,
+          "recall": 0.2857,
+          "f1-score": 0.4444,
+          "support": 21.0
+        },
+        "onboarding": {
+          "precision": 1.0,
+          "recall": 0.1818,
+          "f1-score": 0.3077,
+          "support": 22.0
+        },
+        "performance_degradation": {
+          "precision": 0.9474,
+          "recall": 0.7826,
+          "f1-score": 0.8571,
+          "support": 23.0
+        },
+        "quota_or_overage": {
+          "precision": 0.7333,
+          "recall": 0.4783,
+          "f1-score": 0.5789,
+          "support": 23.0
+        },
+        "rate_limit": {
+          "precision": 1.0,
+          "recall": 0.6923,
+          "f1-score": 0.8182,
+          "support": 13.0
+        },
+        "rollback_request": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 28.0
+        },
+        "security_incident": {
+          "precision": 1.0,
+          "recall": 0.2308,
+          "f1-score": 0.375,
+          "support": 26.0
+        },
+        "sso_configuration": {
+          "precision": 1.0,
+          "recall": 0.6538,
+          "f1-score": 0.7907,
+          "support": 26.0
+        },
+        "unclear_request": {
+          "precision": 0.12,
+          "recall": 1.0,
+          "f1-score": 0.2143,
+          "support": 15.0
+        },
+        "webhook_issue": {
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1-score": 0.5,
+          "support": 21.0
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "account_access",
+          "api_key_issue",
+          "api_usage_question",
+          "authentication_failure",
+          "billing_query",
+          "compliance_request",
+          "configuration_help",
+          "data_export",
+          "data_residency",
+          "database_issue",
+          "deployment_failure",
+          "feature_request",
+          "integration_help",
+          "onboarding",
+          "performance_degradation",
+          "quota_or_overage",
+          "rate_limit",
+          "rollback_request",
+          "security_incident",
+          "sso_configuration",
+          "unclear_request",
+          "webhook_issue"
+        ],
+        "matrix": [
+          [
+            19,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0
+          ],
+          [
+            5,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            12,
+            0
+          ],
+          [
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            19,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            13,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            7,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            24,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            21,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            10,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            29,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            23,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            25,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            27,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            0,
+            10,
+            0,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            15,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0,
+            0,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            18,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            4,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            28,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            7,
+            0,
+            0,
+            13,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            17,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            15,
+            0
+          ],
+          [
+            0,
+            0,
+            9,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            4,
+            7
+          ]
+        ]
+      },
+      "text_report": "                         precision    recall  f1-score   support\n\n         account_access      0.792     0.864     0.826        22\n          api_key_issue      0.333     0.056     0.095        18\n     api_usage_question      0.182     0.167     0.174        24\n authentication_failure      1.000     0.650     0.788        20\n          billing_query      0.857     1.000     0.923        24\n     compliance_request      0.525     0.808     0.636        26\n     configuration_help      0.172     0.294     0.217        17\n            data_export      1.000     1.000     1.000        29\n         data_residency      0.000     0.000     0.000        29\n         database_issue      1.000     0.962     0.980        26\n     deployment_failure      0.659     1.000     0.794        27\n        feature_request      1.000     0.500     0.667        20\n       integration_help      1.000     0.286     0.444        21\n             onboarding      1.000     0.182     0.308        22\nperformance_degradation      0.947     0.783     0.857        23\n       quota_or_overage      0.733     0.478     0.579        23\n             rate_limit      1.000     0.692     0.818        13\n       rollback_request      1.000     1.000     1.000        28\n      security_incident      1.000     0.231     0.375        26\n      sso_configuration      1.000     0.654     0.791        26\n        unclear_request      0.120     1.000     0.214        15\n          webhook_issue      1.000     0.333     0.500        21\n\n               accuracy                          0.598       500\n              macro avg      0.742     0.588     0.590       500\n           weighted avg      0.750     0.598     0.607       500\n"
+    },
+    "urgency": {
+      "evaluated": 500,
+      "accuracy_pct": 32.8
+    },
+    "routing": {
+      "evaluated": 500,
+      "agreement_pct": 37.8,
+      "false_auto_respond": 0,
+      "false_auto_respond_pct": 0.0,
+      "missed_auto_respond": 311,
+      "reason_breakdown": {
+        "confidence_below_threshold": 296,
+        "intent_always_escalates": 111,
+        "ticket_flagged_must_not_auto_respond": 87,
+        "no_supporting_documentation": 6
+      }
+    },
+    "retrieval": {
+      "tickets_with_expected_docs": 357,
+      "hit_rate_at_k_pct": 92.16,
+      "mean_recall_at_k_pct": 81.23,
+      "tickets_without_expected_docs": 143,
+      "correctly_returned_nothing_pct": 14.69
+    },
+    "citation_accuracy": {
+      "responses_with_citations": 0,
+      "auto_responses": 0,
+      "total_citations": 0,
+      "resolvable_pct": 0.0,
+      "matches_expected_doc_pct": 0.0,
+      "tickets_scored_against_expected": 0
+    },
+    "hallucination": {
+      "auto_responses": 0,
+      "uncited_responses": 0,
+      "unresolvable_citation_responses": 0,
+      "forbidden_claim_responses": 0,
+      "automated_hallucination_rate_pct": 0.0,
+      "note": "automated lower bound; human review of >=50 responses by two assessors is required separately"
+    },
+    "latency_seconds": {
+      "mean": 0.048,
+      "p50": 0.04,
+      "p95": 0.054,
+      "max": 1.023
+    },
+    "availability": {
+      "tickets": 500,
+      "handled_without_error_pct": 100.0,
+      "degraded_pct": 100.0,
+      "degradation_reasons": {
+        "classifier_degraded": 500
+      }
+    }
+  },
+  "tier_three_governance_conditions": {
+    "private_data_in_outbound_text": {
+      "responses_scanned": 0,
+      "occurrences": 0,
+      "offending_tickets": [],
+      "condition_holds": true
+    },
+    "quality_across_customer_groups": {
+      "language_fluency": {
+        "groups": {
+          "fluent": {
+            "n": 380,
+            "intent_accuracy_pct": 61.58,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 39.21,
+            "mean_confidence": 0.372
+          },
+          "non_fluent": {
+            "n": 120,
+            "intent_accuracy_pct": 54.17,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 33.33,
+            "mean_confidence": 0.349
+          }
+        },
+        "variation_points": 7.41,
+        "variation_by_measure": {
+          "intent_accuracy_pct": 7.41,
+          "false_auto_respond_pct": 0.0
+        }
+      },
+      "customer_tier": {
+        "groups": {
+          "business": {
+            "n": 164,
+            "intent_accuracy_pct": 59.76,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 35.37,
+            "mean_confidence": 0.368
+          },
+          "enterprise": {
+            "n": 83,
+            "intent_accuracy_pct": 63.86,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 38.55,
+            "mean_confidence": 0.353
+          },
+          "standard": {
+            "n": 253,
+            "intent_accuracy_pct": 58.5,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 39.13,
+            "mean_confidence": 0.37
+          }
+        },
+        "variation_points": 5.36,
+        "variation_by_measure": {
+          "intent_accuracy_pct": 5.36,
+          "false_auto_respond_pct": 0.0
+        }
+      },
+      "customer_region": {
+        "groups": {
+          "asia_pacific": {
+            "n": 119,
+            "intent_accuracy_pct": 61.34,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 46.22,
+            "mean_confidence": 0.361
+          },
+          "europe": {
+            "n": 151,
+            "intent_accuracy_pct": 56.95,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 31.79,
+            "mean_confidence": 0.359
+          },
+          "latin_america": {
+            "n": 60,
+            "intent_accuracy_pct": 58.33,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 35.0,
+            "mean_confidence": 0.379
+          },
+          "north_america": {
+            "n": 170,
+            "intent_accuracy_pct": 61.76,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 38.24,
+            "mean_confidence": 0.373
+          }
+        },
+        "variation_points": 4.81,
+        "variation_by_measure": {
+          "intent_accuracy_pct": 4.81,
+          "false_auto_respond_pct": 0.0
+        }
+      },
+      "channel": {
+        "groups": {
+          "chat": {
+            "n": 155,
+            "intent_accuracy_pct": 52.26,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 32.26,
+            "mean_confidence": 0.338
+          },
+          "docs_comment": {
+            "n": 78,
+            "intent_accuracy_pct": 62.82,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 47.44,
+            "mean_confidence": 0.37
+          },
+          "email": {
+            "n": 212,
+            "intent_accuracy_pct": 63.68,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 37.26,
+            "mean_confidence": 0.381
+          },
+          "forum": {
+            "n": 55,
+            "intent_accuracy_pct": 61.82,
+            "false_auto_respond_pct": 0.0,
+            "auto_respond_rate_pct": 0.0,
+            "routing_agreement_pct": 41.82,
+            "mean_confidence": 0.388
+          }
+        },
+        "variation_points": 11.42,
+        "variation_by_measure": {
+          "intent_accuracy_pct": 11.42,
+          "false_auto_respond_pct": 0.0
+        }
+      },
+      "max_variation_points": 11.42,
+      "worst_measure": "channel.intent_accuracy_pct",
+      "gated_on": [
+        "intent_accuracy_pct",
+        "false_auto_respond_pct"
+      ],
+      "condition_holds": false
+    },
+    "decision_logging": {
+      "tickets_processed": 500,
+      "tickets_with_final_decision": 500,
+      "total_decision_rows": 1500,
+      "missing_ticket_ids": [],
+      "unexpected_ticket_ids": [],
+      "reconciled": true,
+      "decision_rows_by_stage": {
+        "classify": 500,
+        "retrieve": 500,
+        "final": 500
+      },
+      "condition_holds": true
+    },
+    "confidence_calibration": {
+      "bands": [
+        {
+          "low": 0.2,
+          "high": 0.4,
+          "count": 125,
+          "stated": 0.2,
+          "observed": 0.12,
+          "gap_points": 8.0
+        },
+        {
+          "low": 0.4,
+          "high": 0.6,
+          "count": 375,
+          "stated": 0.4223,
+          "observed": 0.7573,
+          "gap_points": -33.51
+        }
+      ],
+      "max_gap_points": 33.51,
+      "condition_holds": false,
+      "note": "bands with fewer than 10 predictions are reported but excluded from the gap"
+    },
+    "all_conditions_hold": false
+  },
+  "headline_table": [
+    {
+      "measure": "First contact resolution",
+      "baseline": "42%",
+      "target": "60%",
+      "achieved": "0.0%"
+    },
+    {
+      "measure": "Mean time to first reply",
+      "baseline": "8 to 12 hrs",
+      "target": "< 5 min",
+      "achieved": "0.0008 min"
+    },
+    {
+      "measure": "Satisfaction proxy",
+      "baseline": "3.2 / 5",
+      "target": "4.0",
+      "achieved": "3.692 / 5"
+    },
+    {
+      "measure": "Escalation rate",
+      "baseline": "58%",
+      "target": "<= 30%",
+      "achieved": "100.0%"
+    },
+    {
+      "measure": "Classification precision",
+      "baseline": "\u2014",
+      "target": "85%",
+      "achieved": "75.03%"
+    },
+    {
+      "measure": "Hallucination rate",
+      "baseline": "\u2014",
+      "target": "<= 5%",
+      "achieved": "0.0%"
+    },
+    {
+      "measure": "Citation accuracy",
+      "baseline": "\u2014",
+      "target": "95%",
+      "achieved": "0.0%"
+    },
+    {
+      "measure": "Latency p95",
+      "baseline": "\u2014",
+      "target": "< 3 s",
+      "achieved": "0.054 s"
+    },
+    {
+      "measure": "Private data occurrences",
+      "baseline": "\u2014",
+      "target": "0",
+      "achieved": "0"
+    },
+    {
+      "measure": "Cross-group variation",
+      "baseline": "\u2014",
+      "target": "< 5 pts",
+      "achieved": "11.42 pts"
+    }
+  ]
+}

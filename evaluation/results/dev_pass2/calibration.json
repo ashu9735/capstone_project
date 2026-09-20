@@ -1,0 +1,23 @@
+{
+  "bands": [
+    {
+      "low": 0.0,
+      "high": 0.2,
+      "count": 125,
+      "stated": 0.12,
+      "observed": 0.12,
+      "gap_points": 0.0
+    },
+    {
+      "low": 0.6,
+      "high": 0.8,
+      "count": 375,
+      "stated": 0.757,
+      "observed": 0.7573,
+      "gap_points": -0.03
+    }
+  ],
+  "max_gap_points": 0.03,
+  "condition_holds": true,
+  "note": "bands with fewer than 10 predictions are reported but excluded from the gap"
+}
